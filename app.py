@@ -1,20 +1,5 @@
 from src.data_loader import load_transactions
-from src.baseline import build_customer_baseline
-
-
-def format_hour(decimal_hour):
-    """
-    Convert decimal hour such as 9.5 into 09:30.
-    """
-
-    hour = int(decimal_hour)
-    minute = int(round((decimal_hour - hour) * 60))
-
-    if minute == 60:
-        hour += 1
-        minute = 0
-
-    return f"{hour:02d}:{minute:02d}"
+from src.risk_engine import detect_large_transfers
 
 
 def main():
@@ -23,30 +8,20 @@ def main():
     print("Transaction Risk Investigation Assistant")
     print("----------------------------------------")
 
-    print(f"Transactions loaded: {len(transactions)}")
+    findings = detect_large_transfers(transactions)
 
-    baseline = build_customer_baseline(transactions)
+    print(f"\nLarge transfer findings: {len(findings)}")
 
-    print("\nCUSTOMER BEHAVIOURAL BASELINE")
-    print("----------------------------------------")
-
-    print(f"Median transaction: ₹{baseline['amount']['median']:,.2f}")
-    print(f"Average transaction: ₹{baseline['amount']['mean']:,.2f}")
-
-    print(
-        "Typical transaction hours:",
-        format_hour(baseline["time"]["typical_start_hour"]),
-        "-",
-        format_hour(baseline["time"]["typical_end_hour"]),
-    )
-
-    print("\nMost common payees:")
-    for payee, count in baseline["common_payees"].items():
-        print(f"  {payee}: {count} transactions")
-
-    print("\nChannels:")
-    for channel, count in baseline["channels"].items():
-        print(f"  {channel}: {count} transactions")
+    for finding in findings:
+        print("\n----------------------------------------")
+        print(f"Transaction: {finding['transaction_id']}")
+        print(f"Payee: {finding['payee']}")
+        print(f"Amount: ₹{finding['amount']:,.2f}")
+        print(f"Rule: {finding['rule_id']} - {finding['rule_name']}")
+        print(f"Historical median: ₹{finding['historical_median']:,.2f}")
+        print(f"Threshold: ₹{finding['large_amount_threshold']:,.2f}")
+        print(f"Median ratio: {finding['median_ratio']}x")
+        print(f"Reason: {finding['reason']}")
 
 
 if __name__ == "__main__":
