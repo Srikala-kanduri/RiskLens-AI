@@ -83,3 +83,79 @@ def detect_large_transfers(transactions: pd.DataFrame):
             })
 
     return findings
+
+def detect_new_payee_bursts(
+    transactions: pd.DataFrame,
+    burst_count=3,
+    window_minutes=60
+):
+    """
+    Detect multiple payments to a newly observed payee
+    within a short time window.
+
+    A payee is considered 'new' if it has not appeared
+    before the first transaction in the burst.
+    """
+
+    findings = []
+
+    transactions = transactions.sort_values("datetime").reset_index(drop=True)
+
+    for index, transaction in transactions.iterrows():
+        current_payee = transaction["payee"]
+
+        # History before the current transaction
+        history = transactions.iloc[:index]
+
+        # If payee already appeared before, it is not new
+        if current_payee in set(history["payee"]):
+            continue
+
+        current_time = transaction["datetime"]
+
+        window_end = current_time + pd.Timedelta(minutes=window_minutes)
+
+        # Look forward within the burst window
+        burst_transactions = transactions[
+            (transactions["datetime"] >= current_time)
+            & (transactions["datetime"] <= window_end)
+            & (transactions["payee"] == current_payee)
+        ]
+
+        if len(burst_transactions) >= burst_count:
+
+            transaction_ids = burst_transactions[
+                "transaction_id"
+            ].tolist()
+
+            total_amount = float(
+                burst_transactions["amount"].sum()
+            )
+
+            findings.append({
+                "rule_id": "RISK-02",
+                "rule_name": "Burst of Payments to New Payee",
+
+                "payee": current_payee,
+                "transaction_ids": transaction_ids,
+                "transaction_count": len(burst_transactions),
+                "total_amount": total_amount,
+
+                "start_time": burst_transactions[
+                    "datetime"
+                ].min(),
+
+                "end_time": burst_transactions[
+                    "datetime"
+                ].max(),
+
+                "window_minutes": window_minutes,
+
+                "reason": (
+                    f"{len(burst_transactions)} payments totaling "
+                    f"₹{total_amount:,.2f} were sent to new payee "
+                    f"'{current_payee}' within {window_minutes} minutes."
+                ),
+            })
+
+    return findings
