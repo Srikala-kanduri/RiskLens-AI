@@ -8,7 +8,12 @@ from src.risk_engine import (
     detect_new_payee_bursts,
     detect_odd_hours,
 )
-
+from src.risk_engine import (
+    detect_large_transfers,
+    detect_new_payee_bursts,
+    detect_odd_hours,
+    detect_behavior_deviation,
+)
 
 def main():
     transactions = load_transactions()
@@ -69,6 +74,27 @@ def main():
         print(f"Payee: {finding['payee']}")
         print(f"Amount: ₹{finding['amount']:,.2f}")
         print(f"Reason: {finding['reason']}")
+    
+        behavior_findings = detect_behavior_deviation(transactions)
 
+    print(
+        f"\n\nRISK-04 Behaviour deviation findings: "
+        f"{len(behavior_findings)}"
+    )
+
+    for finding in behavior_findings:
+        print("\n----------------------------------------")
+        print(f"Transaction: {finding['transaction_id']}")
+        print(f"Payee: {finding['payee']}")
+        print(f"Amount: ₹{finding['amount']:,.2f}")
+        print(
+            f"Deviation score: "
+            f"{finding['deviation_score']}"
+        )
+
+        print("Deviation reasons:")
+
+        for reason in finding["deviation_reasons"]:
+            print(f"  - {reason}")
 if __name__ == "__main__":
     main()

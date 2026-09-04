@@ -238,3 +238,116 @@ def detect_odd_hours(
             })
 
     return findings
+
+def detect_behavior_deviation(
+    transactions: pd.DataFrame,
+    min_deviation_score=2
+):
+    """
+    Detect transactions that materially deviate from the customer's
+    established behaviour across multiple dimensions.
+
+    Each transaction is compared only with prior history.
+    """
+
+    findings = []
+
+    transactions = transactions.sort_values(
+        "datetime"
+    ).reset_index(drop=True)
+
+    for index, transaction in transactions.iterrows():
+
+        history = transactions.iloc[:index]
+
+        if len(history) < MIN_HISTORY:
+            continue
+
+        deviation_reasons = []
+        deviation_score = 0
+
+        
+        median_amount = float(history["amount"].median())
+
+        if median_amount > 0:
+            amount_ratio = (
+                float(transaction["amount"]) / median_amount
+            )
+        else:
+            amount_ratio = 0
+
+        if amount_ratio >= 3:
+            deviation_score += 1
+            deviation_reasons.append(
+                f"Amount is {amount_ratio:.1f}× the historical median"
+            )
+
+        
+        historical_payees = set(history["payee"])
+
+        if transaction["payee"] not in historical_payees:
+            deviation_score += 1
+            deviation_reasons.append(
+                "Payee has not appeared previously"
+            )
+
+        
+        channel_counts = history["channel"].value_counts()
+
+        current_channel = transaction["channel"]
+
+        if current_channel not in channel_counts:
+            deviation_score += 1
+            deviation_reasons.append(
+                "Transaction channel has not been used previously"
+            )
+
+        
+        historical_hours = (
+            history["datetime"].dt.hour
+            + history["datetime"].dt.minute / 60
+        )
+
+        typical_start = historical_hours.quantile(0.10)
+        typical_end = historical_hours.quantile(0.90)
+
+        tolerance_hours = 2
+
+        allowed_start = typical_start - tolerance_hours
+        allowed_end = typical_end + tolerance_hours
+
+        current_hour = (
+            transaction["datetime"].hour
+            + transaction["datetime"].minute / 60
+        )
+
+        if current_hour < allowed_start or current_hour > allowed_end:
+            deviation_score += 1
+            deviation_reasons.append(
+                "Transaction occurred significantly outside normal hours"
+            )
+
+       
+        if deviation_score >= min_deviation_score:
+
+            findings.append({
+                "transaction_id": transaction["transaction_id"],
+                "datetime": transaction["datetime"],
+                "payee": transaction["payee"],
+                "amount": float(transaction["amount"]),
+                "channel": transaction["channel"],
+
+                "rule_id": "RISK-04",
+                "rule_name": "Behaviour Deviation",
+
+                "deviation_score": deviation_score,
+                "deviation_reasons": deviation_reasons,
+
+                "reason": (
+                    f"Transaction differs from the customer's "
+                    f"historical behaviour across "
+                    f"{deviation_score} dimensions."
+                ),
+            })
+
+    return findings
