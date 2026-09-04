@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Risk Investigation Assistant</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Transaction Risk Investigation Assistant</h1>
+        <p>
+            Evidence-grounded AI assistant for banking transaction review.
+        </p>
+    </div>
+
+    <div class="input-card">
+        <h2>Investigation Input</h2>
+
+      <p>
+    Select a sample transaction history to investigate.
+</p>
+
+<form action="/analyze" method="POST">
+
+    <select name="case_type">
+
+        <option
+            value="difficult"
+            {% if selected_case == "difficult" %}selected{% endif %}
+        >
+            Difficult Case
+        </option>
+
+        <option
+            value="normal"
+            {% if selected_case == "normal" %}selected{% endif %}
+        >
+            Normal Case
+        </option>
+
+    </select>
+
+    <button type="submit">
+        Analyze Transactions
+    </button>
+
+</form>
+    </div>
+
+    {% if error %}
+    <div class="error-card">
+        <strong>Error:</strong>
+        {{ error }}
+    </div>
+    {% endif %}
+
+
+    {% if result %}
+
+    <div class="status-card">
+
+        <h2>Investigation Status</h2>
+
+        <div class="
+            {% if result.report.status == 'ATTENTION RECOMMENDED' %}
+                attention-status
+            {% else %}
+                safe-status
+            {% endif %}
+        ">
+            {{ result.report.status }}
+        </div>
+
+        <p>
+            {{ result.report.summary }}
+        </p>
+
+    </div>
+
+
+    <div class="metrics">
+
+        <div class="metric-card">
+            <h3>
+                {{ result.baseline.transaction_count }}
+            </h3>
+            <p>Total Transactions</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>
+                {{ result.report.flagged_transaction_ids | length }}
+            </h3>
+            <p>Flagged Transactions</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>
+                ₹{{ "{:,.2f}".format(result.report.total_flagged_amount) }}
+            </h3>
+            <p>Flagged Amount</p>
+        </div>
+
+    </div>
+
+
+    <div class="section-card">
+
+        <h2>Triggered Risk Rules</h2>
+
+        {% if result.report.triggered_rules %}
+
+            {% for rule in result.report.triggered_rules %}
+
+            <div class="rule-card">
+                <strong>
+                    {{ rule.rule_id }}
+                </strong>
+
+                <span>
+                    {{ rule.rule_name }}
+                </span>
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No risk rules were triggered.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="section-card">
+
+        <h2>Flagged Transaction Evidence</h2>
+
+        {% if result.report.findings %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Date / Time</th>
+                    <th>Payee</th>
+                    <th>Amount</th>
+                    <th>Channel</th>
+                    <th>Triggered Rules</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for finding in result.report.findings %}
+
+                <tr>
+
+                    <td>
+                        {{ finding.transaction_id }}
+                    </td>
+
+                    <td>
+                        {{ finding.datetime }}
+                    </td>
+
+                    <td>
+                        {{ finding.payee }}
+                    </td>
+
+                    <td>
+                        ₹{{ "{:,.2f}".format(finding.amount) }}
+                    </td>
+
+                    <td>
+                        {{ finding.channel }}
+                    </td>
+
+                    <td>
+                        {{ finding.triggered_rules | join(", ") }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <p>
+                No transaction evidence requires review.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="section-card">
+
+        <h2>Customer Behaviour Baseline</h2>
+
+        <div class="baseline-grid">
+
+            <div>
+                <strong>Median Transaction</strong>
+                <p>
+                    ₹{{ "{:,.2f}".format(result.baseline.amount.median) }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Average Transaction</strong>
+                <p>
+                    ₹{{ "{:,.2f}".format(result.baseline.amount.mean) }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Typical Activity Start</strong>
+                <p>
+                    {{ result.baseline.time.typical_start_hour }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Typical Activity End</strong>
+                <p>
+                    {{ result.baseline.time.typical_end_hour }}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-card ai-card">
+
+        <h2>AI Investigation Narrative</h2>
+
+        {% if result.ai_investigation.available %}
+
+            <div class="ai-model">
+                Gemini-assisted explanation
+                {% if result.ai_investigation.model %}
+                    · {{ result.ai_investigation.model }}
+                {% endif %}
+            </div>
+
+        {% endif %}
+
+        <div class="ai-content">
+            {{ result.ai_investigation.content }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

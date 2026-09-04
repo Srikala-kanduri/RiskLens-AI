@@ -14,10 +14,15 @@ def generate_investigation_report(
 
     report = {
         "status": "NO ATTENTION REQUIRED",
-        "summary": "",
+         "summary": (
+        "No significant activity requiring investigation was identified. "
+        "The transaction history appears consistent with the customer's "
+        "established behaviour."
+    ),
         "triggered_rules": [],
         "flagged_transaction_ids": [],
         "findings": [],
+        "total_flagged_amount": 0.0,
     }
 
     

@@ -1,0 +1,44 @@
+transaction_id,date,time,description,payee,amount,channel
+TXN001,2026-06-01,09:15,Grocery Purchase,Reliance Fresh,1850,UPI
+TXN002,2026-06-02,20:10,Food Order,Swiggy,420,UPI
+TXN003,2026-06-03,18:45,Online Shopping,Amazon,2100,Card
+TXN004,2026-06-05,10:30,Mobile Recharge,Airtel,699,UPI
+TXN005,2026-06-06,19:20,Food Order,Zomato,550,UPI
+TXN006,2026-06-08,11:15,Grocery Purchase,Reliance Fresh,2300,UPI
+TXN007,2026-06-10,17:40,Online Shopping,Amazon,1800,Card
+TXN008,2026-06-12,21:00,Food Order,Swiggy,380,UPI
+TXN009,2026-06-14,09:50,Electricity Bill,APSPDCL,1450,Net Banking
+TXN010,2026-06-16,18:30,Grocery Purchase,Reliance Fresh,1950,UPI
+TXN011,2026-06-18,20:15,Food Order,Zomato,620,UPI
+TXN012,2026-06-20,12:10,Online Shopping,Amazon,2650,Card
+TXN013,2026-06-22,08:55,Mobile Recharge,Airtel,719,UPI
+TXN014,2026-06-24,19:35,Grocery Purchase,Reliance Fresh,2200,UPI
+TXN015,2026-06-26,20:40,Food Order,Swiggy,460,UPI
+TXN016,2026-06-28,10:20,Online Shopping,Amazon,2400,Card
+TXN017,2026-07-01,09:30,Grocery Purchase,Reliance Fresh,2050,UPI
+TXN018,2026-07-03,21:10,Food Order,Zomato,590,UPI
+TXN019,2026-07-05,13:15,Online Shopping,Amazon,3100,Card
+TXN020,2026-07-07,10:05,Electricity Bill,APSPDCL,1520,Net Banking
+TXN021,2026-07-09,18:25,Grocery Purchase,Reliance Fresh,1750,UPI
+TXN022,2026-07-11,20:35,Food Order,Swiggy,510,UPI
+TXN023,2026-07-13,11:40,Online Shopping,Amazon,2800,Card
+TXN024,2026-07-15,09:10,Mobile Recharge,Airtel,699,UPI
+TXN025,2026-07-17,19:45,Grocery Purchase,Reliance Fresh,2350,UPI
+TXN026,2026-07-19,21:05,Food Order,Zomato,640,UPI
+TXN027,2026-07-21,12:20,Online Shopping,Amazon,1950,Card
+TXN028,2026-07-23,10:50,Grocery Purchase,Reliance Fresh,2250,UPI
+TXN029,2026-07-25,20:25,Food Order,Swiggy,440,UPI
+TXN030,2026-07-27,18:10,Online Shopping,Amazon,2750,Card
+TXN031,2026-08-01,09:20,Grocery Purchase,Reliance Fresh,1900,UPI
+TXN032,2026-08-03,20:30,Food Order,Zomato,580,UPI
+TXN033,2026-08-05,11:25,Online Shopping,Amazon,2550,Card
+TXN034,2026-08-07,19:15,Grocery Purchase,Reliance Fresh,2150,UPI
+TXN035,2026-08-09,20:45,Food Order,Swiggy,490,UPI
+TXN036,2026-08-11,10:10,Electricity Bill,APSPDCL,1490,Net Banking
+TXN037,2026-08-13,09:40,Mobile Recharge,Airtel,719,UPI
+TXN038,2026-08-15,18:55,Grocery Purchase,Reliance Fresh,2450,UPI
+TXN039,2026-08-17,21:15,Food Order,Zomato,610,UPI
+TXN040,2026-08-19,12:05,Online Shopping,Amazon,2950,Card
+TXN044,2026-08-24,19:10,Grocery Purchase,Reliance Fresh,2050,UPI
+TXN045,2026-08-26,20:30,Food Order,Swiggy,530,UPI
+TXN046,2026-08-28,11:20,Online Shopping,Amazon,2600,Card
