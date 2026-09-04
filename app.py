@@ -3,6 +3,11 @@ from src.risk_engine import (
     detect_large_transfers,
     detect_new_payee_bursts,
 )
+from src.risk_engine import (
+    detect_large_transfers,
+    detect_new_payee_bursts,
+    detect_odd_hours,
+)
 
 
 def main():
@@ -47,7 +52,23 @@ def main():
             f"₹{finding['total_amount']:,.2f}"
         )
         print(f"Reason: {finding['reason']}")
+        odd_hour_findings = detect_odd_hours(transactions)
 
+    print(
+        f"\n\nRISK-03 Odd-hours findings: "
+        f"{len(odd_hour_findings)}"
+    )
+
+    for finding in odd_hour_findings:
+        print("\n----------------------------------------")
+        print(f"Transaction: {finding['transaction_id']}")
+        print(
+            f"Time: "
+            f"{finding['datetime'].strftime('%H:%M')}"
+        )
+        print(f"Payee: {finding['payee']}")
+        print(f"Amount: ₹{finding['amount']:,.2f}")
+        print(f"Reason: {finding['reason']}")
 
 if __name__ == "__main__":
     main()

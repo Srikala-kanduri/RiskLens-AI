@@ -159,3 +159,82 @@ def detect_new_payee_bursts(
             })
 
     return findings
+
+def detect_odd_hours(
+    transactions: pd.DataFrame,
+    tolerance_hours=2
+):
+    """
+    Detect transactions that occur significantly outside
+    the customer's established activity hours.
+
+    Uses prior transaction history only to avoid data leakage.
+    A tolerance margin prevents minor variations from being
+    incorrectly flagged.
+    """
+
+    findings = []
+
+    transactions = transactions.sort_values(
+        "datetime"
+    ).reset_index(drop=True)
+
+    for index, transaction in transactions.iterrows():
+
+        history = transactions.iloc[:index]
+
+        if len(history) < MIN_HISTORY:
+            continue
+
+        historical_hours = (
+            history["datetime"].dt.hour
+            + history["datetime"].dt.minute / 60
+        )
+
+        typical_start = historical_hours.quantile(0.10)
+        typical_end = historical_hours.quantile(0.90)
+
+        # Allow reasonable variation around normal hours
+        allowed_start = typical_start - tolerance_hours
+        allowed_end = typical_end + tolerance_hours
+
+        current_hour = (
+            transaction["datetime"].hour
+            + transaction["datetime"].minute / 60
+        )
+
+        if current_hour < allowed_start or current_hour > allowed_end:
+
+            findings.append({
+                "transaction_id": transaction["transaction_id"],
+                "datetime": transaction["datetime"],
+                "payee": transaction["payee"],
+                "amount": float(transaction["amount"]),
+                "channel": transaction["channel"],
+
+                "rule_id": "RISK-03",
+                "rule_name": "Odd-Hours Activity",
+
+                "transaction_hour": round(current_hour, 2),
+                "typical_start_hour": round(
+                    float(typical_start), 2
+                ),
+                "typical_end_hour": round(
+                    float(typical_end), 2
+                ),
+                "allowed_start_hour": round(
+                    float(allowed_start), 2
+                ),
+                "allowed_end_hour": round(
+                    float(allowed_end), 2
+                ),
+
+                "reason": (
+                    f"Transaction occurred at "
+                    f"{transaction['datetime'].strftime('%H:%M')}, "
+                    f"significantly outside the customer's "
+                    f"historical activity pattern."
+                ),
+            })
+
+    return findings
