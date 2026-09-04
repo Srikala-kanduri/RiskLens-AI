@@ -141,6 +141,7 @@ def generate_investigation_report(
     )
 
     report["total_flagged_amount"] = total_flagged_amount
+    report["flagged_payees"] = list(dict.fromkeys([f["payee"] for f in report["findings"]]))
 
     report["summary"] = (
         f"{len(report['findings'])} transactions require review, "
