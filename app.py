@@ -2,19 +2,12 @@ from src.data_loader import load_transactions
 from src.risk_engine import (
     detect_large_transfers,
     detect_new_payee_bursts,
-)
-from src.risk_engine import (
-    detect_large_transfers,
-    detect_new_payee_bursts,
-    detect_odd_hours,
-)
-from src.risk_engine import (
-    detect_large_transfers,
-    detect_new_payee_bursts,
     detect_odd_hours,
     detect_behavior_deviation,
 )
 from src.report_generator import generate_investigation_report
+from src.gemini_service import generate_ai_investigation
+
 
 def main():
     transactions = load_transactions()
@@ -22,9 +15,15 @@ def main():
     print("Transaction Risk Investigation Assistant")
     print("----------------------------------------")
 
+    # Run all deterministic risk rules once
     large_transfer_findings = detect_large_transfers(transactions)
     new_payee_findings = detect_new_payee_bursts(transactions)
+    odd_hour_findings = detect_odd_hours(transactions)
+    behavior_findings = detect_behavior_deviation(transactions)
 
+    # --------------------------------------------------
+    # RISK-01
+    # --------------------------------------------------
     print(
         f"\nRISK-01 Large transfer findings: "
         f"{len(large_transfer_findings)}"
@@ -37,6 +36,9 @@ def main():
         print(f"Payee: {finding['payee']}")
         print(f"Reason: {finding['reason']}")
 
+    # --------------------------------------------------
+    # RISK-02
+    # --------------------------------------------------
     print(
         f"\n\nRISK-02 New payee burst findings: "
         f"{len(new_payee_findings)}"
@@ -58,8 +60,10 @@ def main():
             f"₹{finding['total_amount']:,.2f}"
         )
         print(f"Reason: {finding['reason']}")
-        odd_hour_findings = detect_odd_hours(transactions)
 
+    # --------------------------------------------------
+    # RISK-03
+    # --------------------------------------------------
     print(
         f"\n\nRISK-03 Odd-hours findings: "
         f"{len(odd_hour_findings)}"
@@ -75,9 +79,10 @@ def main():
         print(f"Payee: {finding['payee']}")
         print(f"Amount: ₹{finding['amount']:,.2f}")
         print(f"Reason: {finding['reason']}")
-    
-        behavior_findings = detect_behavior_deviation(transactions)
 
+    # --------------------------------------------------
+    # RISK-04
+    # --------------------------------------------------
     print(
         f"\n\nRISK-04 Behaviour deviation findings: "
         f"{len(behavior_findings)}"
@@ -98,7 +103,10 @@ def main():
         for reason in finding["deviation_reasons"]:
             print(f"  - {reason}")
 
-        report = generate_investigation_report(
+    # --------------------------------------------------
+    # Structured investigation report
+    # --------------------------------------------------
+    report = generate_investigation_report(
         transactions=transactions,
         large_transfer_findings=large_transfer_findings,
         new_payee_findings=new_payee_findings,
@@ -137,5 +145,18 @@ def main():
 
         for reason in finding["reasons"]:
             print(f"  - {reason}")
+
+    # --------------------------------------------------
+    # Gemini explanation — run only once
+    # --------------------------------------------------
+    ai_report = generate_ai_investigation(report)
+
+    print("\n\n========================================")
+    print("AI INVESTIGATION NARRATIVE")
+    print("========================================")
+
+    print(ai_report["content"])
+
+
 if __name__ == "__main__":
     main()
