@@ -14,6 +14,7 @@ from src.risk_engine import (
     detect_odd_hours,
     detect_behavior_deviation,
 )
+from src.report_generator import generate_investigation_report
 
 def main():
     transactions = load_transactions()
@@ -95,6 +96,46 @@ def main():
         print("Deviation reasons:")
 
         for reason in finding["deviation_reasons"]:
+            print(f"  - {reason}")
+
+        report = generate_investigation_report(
+        transactions=transactions,
+        large_transfer_findings=large_transfer_findings,
+        new_payee_findings=new_payee_findings,
+        odd_hour_findings=odd_hour_findings,
+        behavior_findings=behavior_findings,
+    )
+
+    print("\n\n========================================")
+    print("INVESTIGATION REPORT")
+    print("========================================")
+
+    print(f"Status: {report['status']}")
+    print(f"Summary: {report['summary']}")
+
+    print("\nTriggered rules:")
+
+    for rule in report["triggered_rules"]:
+        print(
+            f"  {rule['rule_id']} - "
+            f"{rule['rule_name']}"
+        )
+
+    print("\nFlagged transactions:")
+
+    for finding in report["findings"]:
+        print("\n----------------------------------------")
+        print(f"Transaction: {finding['transaction_id']}")
+        print(f"Payee: {finding['payee']}")
+        print(f"Amount: ₹{finding['amount']:,.2f}")
+        print(
+            "Rules:",
+            ", ".join(finding["triggered_rules"])
+        )
+
+        print("Reasons:")
+
+        for reason in finding["reasons"]:
             print(f"  - {reason}")
 if __name__ == "__main__":
     main()
