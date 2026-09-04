@@ -183,3 +183,48 @@ select {
     font-size: 15px;
     margin-right: 10px;
 }
+.ai-content {
+    line-height: 1.7;
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.ai-content p {
+    margin: 10px 0;
+}
+
+.ai-content strong {
+    color: #111827;
+}
+
+.ai-content ul,
+.ai-content ol {
+    padding-left: 24px;
+}
+
+.ai-content li {
+    margin: 7px 0;
+}
+.upload-section {
+    margin: 20px 0;
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+}
+
+.upload-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.upload-section input {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.upload-section small {
+    color: #667085;
+}

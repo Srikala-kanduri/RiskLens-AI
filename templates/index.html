@@ -29,7 +29,11 @@
     Select a sample transaction history to investigate.
 </p>
 
-<form action="/analyze" method="POST">
+<form
+    action="/analyze"
+    method="POST"
+    enctype="multipart/form-data"
+>
 
     <select name="case_type">
 
@@ -49,6 +53,23 @@
 
     </select>
 
+    <div class="upload-section">
+    <label for="transaction_file">
+        Or upload transaction history
+    </label>
+
+    <input
+        type="file"
+        id="transaction_file"
+        name="transaction_file"
+        accept=".csv"
+    >
+
+    <small>
+        CSV must contain transaction_id, date, time,
+        description, payee, amount and channel.
+    </small>
+</div>
     <button type="submit">
         Analyze Transactions
     </button>
@@ -239,14 +260,14 @@
             <div>
                 <strong>Typical Activity Start</strong>
                 <p>
-                    {{ result.baseline.time.typical_start_hour }}
+                    {{ result.baseline.time.typical_start_time  }}
                 </p>
             </div>
 
             <div>
                 <strong>Typical Activity End</strong>
                 <p>
-                    {{ result.baseline.time.typical_end_hour }}
+                    {{ result.baseline.time.typical_end_time }}
                 </p>
             </div>
 
@@ -271,7 +292,7 @@
         {% endif %}
 
         <div class="ai-content">
-            {{ result.ai_investigation.content }}
+            {{ result.ai_investigation.html | safe }}
         </div>
 
     </div>

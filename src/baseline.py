@@ -1,5 +1,15 @@
 import pandas as pd
 
+def decimal_hour_to_time(decimal_hour):
+    """
+    Convert a decimal hour such as 9.53 into a readable time such as 09:32.
+    """
+    total_minutes = round(decimal_hour * 60)
+
+    hours = (total_minutes // 60) % 24
+    minutes = total_minutes % 60
+
+    return f"{hours:02d}:{minutes:02d}"
 
 def build_customer_baseline(transactions: pd.DataFrame):
     """
@@ -52,10 +62,15 @@ def build_customer_baseline(transactions: pd.DataFrame):
         },
 
         "time": {
-            "typical_start_hour": round(float(typical_start_hour), 2),
-            "typical_end_hour": round(float(typical_end_hour), 2),
-        },
-
+    "typical_start_hour": round(float(typical_start_hour), 2),
+    "typical_end_hour": round(float(typical_end_hour), 2),
+    "typical_start_time": decimal_hour_to_time(
+        float(typical_start_hour)
+    ),
+    "typical_end_time": decimal_hour_to_time(
+        float(typical_end_hour)
+    ),
+},
         "common_payees": common_payees,
 
         "channels": common_channels,

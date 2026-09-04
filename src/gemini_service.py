@@ -90,6 +90,18 @@ LIMITATION
 State clearly that these indicators do not establish that fraud occurred
 and require human review.
 
+FORMATTING REQUIREMENTS:
+
+- Return clean Markdown only.
+- Use ### for each required section heading.
+- Use standard Markdown bullet points using "- ".
+- Use numbered lists only for investigator priorities.
+- Do not escape Markdown characters.
+- Do not use HTML.
+- Do not use Markdown tables.
+- Do not wrap the response in a code block.
+- Keep transaction IDs and important values in bold where useful.
+
 VERIFIED INVESTIGATION DATA:
 
 {verified_report}

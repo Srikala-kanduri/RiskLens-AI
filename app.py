@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-
+import markdown
 from src.data_loader import load_transactions
 from src.analysis_service import analyze_transactions
 
@@ -21,17 +21,28 @@ def home():
 def analyze():
     try:
         selected_case = request.form.get("case_type", "difficult")
+        uploaded_file = request.files.get("transaction_file")
 
-        if selected_case == "normal":
-            file_path = "data/normal_case.csv"
+        # Use uploaded CSV if provided
+        if uploaded_file and uploaded_file.filename:
+            transactions = load_transactions(uploaded_file)
+            selected_case = "uploaded"
+
+        # Otherwise use selected sample
+        elif selected_case == "normal":
+            transactions = load_transactions("data/normal_case.csv")
+
         else:
-            file_path = "data/transactions.csv"
-
-        transactions = load_transactions(file_path)
+            transactions = load_transactions("data/transaction.csv")
 
         result = analyze_transactions(
             transactions,
             include_ai=True,
+        )
+
+        result["ai_investigation"]["html"] = markdown.markdown(
+            result["ai_investigation"]["content"],
+            extensions=["nl2br"],
         )
 
         return render_template(
@@ -46,7 +57,10 @@ def analyze():
             "index.html",
             result=None,
             error=str(error),
-            selected_case="difficult",
+            selected_case=request.form.get(
+                "case_type",
+                "difficult",
+            ),
         )
 
 
