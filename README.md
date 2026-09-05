@@ -1,5 +1,4 @@
 TRACK_ID=PS06
-TRACK_ID=PS06
 
 # RiskLens AI
 ### Transaction Risk Investigation Assistant
