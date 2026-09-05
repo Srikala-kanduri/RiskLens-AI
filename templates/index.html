@@ -23,11 +23,6 @@
             <div class="brand-subtitle">Transaction Risk Investigation Assistant</div>
         </div>
     </div>
-
-    <div class="system-status">
-        <span class="status-dot"></span>
-        SYSTEM ONLINE
-    </div>
 </nav>
 
 <main class="page">
@@ -227,32 +222,60 @@
     {% if result %}
 
     <section class="
-        result-banner
-        {% if result.report.status == 'ATTENTION RECOMMENDED' %}
-            result-warning
-        {% else %}
-            result-safe
-        {% endif %}
-    ">
-        <div class="result-icon">
-            {% if result.report.status == 'ATTENTION RECOMMENDED' %}
-                !
-            {% else %}
-                ✓
-            {% endif %}
-        </div>
+    result-banner
+    {% if result.report.status == 'ATTENTION RECOMMENDED' %}
+        result-warning
+    {% else %}
+        result-safe
+    {% endif %}
+">
 
-        <div class="result-copy">
-            <span class="eyebrow">PRIMARY FINDING</span>
-            <h2>{{ result.report.status }}</h2>
-            <p>{{ result.report.summary }}</p>
-        </div>
+    <div class="result-icon">
+        {% if result.report.status == 'ATTENTION RECOMMENDED' %}
+            !
+        {% else %}
+            ✓
+        {% endif %}
+    </div>
+
+    <div class="result-copy">
+        <span class="eyebrow">PRIMARY FINDING</span>
+        <h2>{{ result.report.status }}</h2>
+        <p>{{ result.report.summary }}</p>
+    </div>
+
+    <div class="result-actions">
 
         <div class="human-review">
             <span>HUMAN DECISION</span>
             <strong>Required</strong>
         </div>
-    </section>
+
+        <a
+            href="/download-report"
+            class="download-report-btn"
+        >
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+
+            Download Report
+        </a>
+
+    </div>
+
+</section>
 
 
     <section class="metrics-grid">
@@ -596,64 +619,340 @@
 
     {% endif %}
 
+<section class="panel ai-panel">
 
-    <section class="panel ai-panel">
+    <!-- AI HEADER -->
+    <div class="ai-header">
 
-        <div class="ai-header">
+        <div class="ai-title">
+            <div class="ai-icon">✦</div>
 
-            <div class="ai-title">
-                <div class="ai-icon">✦</div>
-
-                <div>
-                    <span class="eyebrow">GEMINI ASSISTED</span>
-                    <h2>AI Investigator</h2>
-                </div>
+            <div>
+                <span class="eyebrow">GEMINI ASSISTED</span>
+                <h2>AI Investigator</h2>
             </div>
-
-            {% if result.ai_investigation.available %}
-                <span class="ai-status">
-                    <span class="ai-status-dot"></span>
-                    GROUNDED
-                </span>
-            {% else %}
-                <span class="ai-status unavailable">
-                    FALLBACK ACTIVE
-                </span>
-            {% endif %}
-
-        </div>
-
-        <div class="grounding-note">
-            <strong>Grounded explanation layer.</strong>
-            Gemini receives verified deterministic findings only.
-            It does not determine whether fraud occurred.
         </div>
 
         {% if result.ai_investigation.available %}
-            <div class="ai-content">
-                {{ result.ai_investigation.html | safe }}
-            </div>
+            <span class="ai-status">
+                <span class="ai-status-dot"></span>
+                GROUNDED
+            </span>
         {% else %}
-            <div class="ai-fallback">
-                <div class="fallback-icon">i</div>
-                <div>
-                    <strong>AI narrative temporarily unavailable</strong>
-                    <p>
-                        The deterministic investigation remains fully available.
-                        Review the verified evidence, risk indicators and behavioural
-                        baseline above.
-                    </p>
-                </div>
-            </div>
+            <span class="ai-status unavailable">
+                FALLBACK ACTIVE
+            </span>
         {% endif %}
 
-        <div class="decision-warning">
-            <strong>Human judgment remains authoritative.</strong>
-            Risk indicators identify activity requiring review;
-            they do not establish that fraud occurred.
+    </div>
+
+
+    <!-- GROUNDING MESSAGE -->
+    <div class="grounding-note">
+        <strong>Evidence-grounded explanation layer.</strong>
+        Gemini receives only verified findings produced by the
+        deterministic risk engine. It does not determine whether
+        fraud occurred.
+    </div>
+
+
+    {% if result.ai_investigation.available %}
+
+        {% set ai = result.ai_investigation.structured %}
+
+        <div class="ai-investigation-layout">
+
+            <!-- ATTENTION ASSESSMENT -->
+            <div class="ai-assessment-card">
+
+                <div class="ai-card-heading">
+                    <div class="ai-section-icon attention-icon">!</div>
+
+                    <div>
+                        <span class="ai-card-number">01</span>
+                        <h3>Attention Assessment</h3>
+                    </div>
+                </div>
+
+                <p>
+                    {{ ai.attention_assessment }}
+                </p>
+
+            </div>
+
+
+            <!-- MAIN AI GRID -->
+            <div class="ai-insight-grid">
+
+
+                <!-- KEY FINDINGS -->
+                <div class="ai-insight-card">
+
+                    <div class="ai-card-heading">
+
+                        <div class="ai-section-icon">
+                            <svg
+                                width="17"
+                                height="17"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M9 11l3 3L22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <span class="ai-card-number">02</span>
+                            <h3>Key Findings</h3>
+                        </div>
+
+                    </div>
+
+                    {% if ai.key_findings %}
+                        <ul class="ai-evidence-list">
+
+                            {% for finding in ai.key_findings %}
+                                <li>
+                                    <span class="ai-bullet"></span>
+                                    <span>{{ finding }}</span>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% else %}
+                        <p class="ai-empty-text">
+                            No additional findings identified.
+                        </p>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CONNECTED ACTIVITY -->
+                <div class="ai-insight-card">
+
+                    <div class="ai-card-heading">
+
+                        <div class="ai-section-icon">
+                            <svg
+                                width="17"
+                                height="17"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="6" cy="6" r="3"/>
+                                <circle cx="18" cy="18" r="3"/>
+                                <path d="M8.5 8.5l7 7"/>
+                                <circle cx="18" cy="6" r="3"/>
+                                <path d="M15 6H9"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <span class="ai-card-number">03</span>
+                            <h3>Connected Activity</h3>
+                        </div>
+
+                    </div>
+
+                    {% if ai.connected_activity %}
+                        <ul class="ai-evidence-list">
+
+                            {% for item in ai.connected_activity %}
+                                <li>
+                                    <span class="ai-bullet"></span>
+                                    <span>{{ item }}</span>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% else %}
+                        <p class="ai-empty-text">
+                            No connected activity requiring explanation.
+                        </p>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- BEHAVIOUR DEVIATION -->
+                <div class="ai-insight-card">
+
+                    <div class="ai-card-heading">
+
+                        <div class="ai-section-icon">
+                            <svg
+                                width="17"
+                                height="17"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <polyline points="3 17 9 11 13 15 21 7"/>
+                                <polyline points="14 7 21 7 21 14"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <span class="ai-card-number">04</span>
+                            <h3>Behaviour Deviation</h3>
+                        </div>
+
+                    </div>
+
+                    {% if ai.deviation_from_normal_behaviour %}
+                        <ul class="ai-evidence-list">
+
+                            {% for item in ai.deviation_from_normal_behaviour %}
+                                <li>
+                                    <span class="ai-bullet"></span>
+                                    <span>{{ item }}</span>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% else %}
+                        <p class="ai-empty-text">
+                            No significant behavioural deviation identified.
+                        </p>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- INVESTIGATOR PRIORITY -->
+                <div class="ai-insight-card priority-card">
+
+                    <div class="ai-card-heading">
+
+                        <div class="ai-section-icon priority-icon">
+                            <svg
+                                width="17"
+                                height="17"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <span class="ai-card-number">05</span>
+                            <h3>Investigator Priority</h3>
+                        </div>
+
+                    </div>
+
+                    {% if ai.investigator_priority %}
+
+                        <div class="priority-list">
+
+                            {% for item in ai.investigator_priority %}
+
+                                <div class="priority-item">
+
+                                    <span class="priority-number">
+                                        {{ "%02d"|format(loop.index) }}
+                                    </span>
+
+                                    <p>{{ item }}</p>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="ai-empty-text">
+                            No additional investigator action is required.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- LIMITATION / HUMAN HANDOFF -->
+            <div class="ai-limitation-card">
+
+                <div class="limitation-icon">!</div>
+
+                <div>
+
+                    <span class="limitation-label">
+                        HUMAN REVIEW LIMITATION
+                    </span>
+
+                    <p>
+                        {{ ai.limitation }}
+                    </p>
+
+                </div>
+
+            </div>
+
         </div>
 
-    </section>
+
+    {% else %}
+
+        <!-- GEMINI FALLBACK -->
+        <div class="ai-fallback">
+
+            <div class="fallback-icon">i</div>
+
+            <div>
+
+                <strong>
+                    AI explanation temporarily unavailable
+                </strong>
+
+                <p>
+                    The deterministic investigation remains fully
+                    available. Review the verified evidence, risk
+                    indicators and behavioural baseline above.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ALWAYS VISIBLE SAFETY NOTICE -->
+    <div class="decision-warning">
+
+        <strong>Human judgment remains authoritative.</strong>
+
+        RiskLens identifies and explains activity requiring review.
+        These indicators do not establish that fraud occurred.
+
+    </div>
+
+</section>
 
     {% endif %}
 

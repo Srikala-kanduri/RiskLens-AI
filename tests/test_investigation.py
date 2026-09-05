@@ -1,16 +1,9 @@
-import os
+import json
 import unittest
-import pandas as pd
-from flask import Flask
+from unittest.mock import patch, MagicMock
 
 from src.data_loader import load_transactions
 from src.analysis_service import analyze_transactions
-from src.risk_engine import (
-    detect_large_transfers,
-    detect_new_payee_bursts,
-    detect_odd_hours,
-    detect_behavior_deviation,
-)
 from app import app
 
 
@@ -79,22 +72,116 @@ class TestTransactionRiskAssistant(unittest.TestCase):
 
     def test_ai_investigation_integration(self):
         """
-        Verify that AI investigation generates expected sections when API key is provided.
-        """
-        if not os.getenv("GEMINI_API_KEY"):
-            self.skipTest("GEMINI_API_KEY not configured")
+        Verify that the Gemini integration converts a grounded
+        model response into the expected structured investigation schema.
 
-        result = analyze_transactions(self.difficult_df, include_ai=True)
+        The Gemini API is mocked so this test does not depend on
+        live API availability, quota, or network conditions.
+        """
+
+        fake_response_data = {
+            "attention_assessment": (
+                "Three verified transactions require investigator review."
+            ),
+            "key_findings": [
+                "TXN041 is a verified flagged transaction.",
+                "TXN042 is a verified flagged transaction.",
+                "TXN043 is a verified flagged transaction.",
+            ],
+            "connected_activity": [
+                (
+                    "TXN041, TXN042 and TXN043 were sent to the same "
+                    "payee within a short time window."
+                )
+            ],
+            "deviation_from_normal_behaviour": [
+                (
+                    "The transaction amounts and timing differ "
+                    "from the customer's historical behaviour."
+                )
+            ],
+            "investigator_priority": [
+                "Review TXN041 first.",
+                "Review the linked transactions and payee relationship.",
+            ],
+            "limitation": (
+                "These indicators do not establish that fraud occurred. "
+                "Human investigation is required."
+            ),
+        }
+
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(fake_response_data)
+
+        with patch(
+            "src.gemini_service.genai.Client"
+        ) as mock_client:
+
+            mock_client.return_value.models.generate_content.return_value = (
+                mock_response
+            )
+
+            with patch.dict(
+                "os.environ",
+                {
+                    "GEMINI_API_KEY": "test-api-key"
+                },
+            ):
+
+                result = analyze_transactions(
+                    self.difficult_df,
+                    include_ai=True,
+                )
+
         ai_resp = result["ai_investigation"]
-        self.assertTrue(ai_resp["available"])
-        content = ai_resp["content"]
-        self.assertIn("ATTENTION ASSESSMENT", content)
-        self.assertIn("KEY FINDINGS", content)
-        self.assertIn("CONNECTED ACTIVITY", content)
-        self.assertIn("DEVIATION FROM NORMAL BEHAVIOUR", content)
-        self.assertIn("INVESTIGATOR PRIORITY", content)
-        self.assertIn("LIMITATION", content)
-        self.assertNotIn("fraud has occurred", content.lower())
+
+        self.assertTrue(
+            ai_resp["available"]
+        )
+
+        self.assertIn(
+            "structured",
+            ai_resp,
+        )
+
+        structured = ai_resp["structured"]
+
+        self.assertTrue(
+            structured["attention_assessment"]
+        )
+
+        self.assertGreater(
+            len(structured["key_findings"]),
+            0,
+        )
+
+        self.assertGreater(
+            len(structured["connected_activity"]),
+            0,
+        )
+
+        self.assertGreater(
+            len(
+                structured[
+                    "deviation_from_normal_behaviour"
+                ]
+            ),
+            0,
+        )
+
+        self.assertGreater(
+            len(
+                structured[
+                    "investigator_priority"
+                ]
+            ),
+            0,
+        )
+
+        self.assertIn(
+            "do not establish that fraud occurred",
+            structured["limitation"].lower(),
+        )
 
     def test_flask_home_route(self):
         """

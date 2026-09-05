@@ -2,3 +2,4 @@ pandas
 google-genai
 Flask
 markdown
+reportlab
