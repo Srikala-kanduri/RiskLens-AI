@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>RiskLens AI | Transaction Investigation</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
-
 <nav class="navbar">
     <div class="brand">
-        <div class="brand-icon">R</div>
-
+        <div class="brand-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <circle cx="11" cy="11" r="3"/>
+                <path d="m13.2 13.2 2.3 2.3"/>
+            </svg>
+        </div>
         <div>
             <div class="brand-name">RiskLens AI</div>
-            <div class="brand-subtitle">
-                Transaction Investigation Intelligence
-            </div>
+            <div class="brand-subtitle">Transaction Risk Investigation Assistant</div>
         </div>
     </div>
 
@@ -34,55 +30,83 @@
     </div>
 </nav>
 
-
 <main class="page">
 
-    <!-- ================= HERO ================= -->
-
     <section class="hero">
+        <div class="hero-copy">
+            <div class="hero-badge">AI-ASSISTED BANKING INVESTIGATION</div>
 
-        <div class="hero-badge">
-            AI-ASSISTED BANKING INVESTIGATION
+            <h1>
+                Explain unusual activity with
+                <span>traceable evidence.</span>
+            </h1>
+
+            <p>
+                RiskLens combines behavioural baselines, deterministic risk rules
+                and grounded Gemini explanations to help investigators review
+                unusual transaction activity without making fraud claims.
+            </p>
+
+            <div class="trust-row">
+                <span>Deterministic detection</span>
+                <span>Evidence traceability</span>
+                <span>Human-in-the-loop</span>
+            </div>
         </div>
 
-        <h1>
-            Turn transaction anomalies into
-            <span>investigable evidence.</span>
-        </h1>
+        <div class="hero-architecture">
+            <div class="architecture-label">INVESTIGATION PIPELINE</div>
 
-        <p>
-            Behaviour-aware transaction analysis combining deterministic
-            risk rules with evidence-grounded AI explanations.
-        </p>
+            <div class="architecture-step">
+                <span class="step-number">01</span>
+                <div>
+                    <strong>Transaction history</strong>
+                    <small>Validated customer evidence</small>
+                </div>
+            </div>
 
-        <div class="pipeline">
-            <span>Transactions</span>
-            <b>→</b>
-            <span>Behaviour Baseline</span>
-            <b>→</b>
-            <span>Risk Engine</span>
-            <b>→</b>
-            <span>AI Explanation</span>
+            <div class="architecture-line"></div>
+
+            <div class="architecture-step">
+                <span class="step-number">02</span>
+                <div>
+                    <strong>Behaviour baseline</strong>
+                    <small>Customer's established pattern</small>
+                </div>
+            </div>
+
+            <div class="architecture-line"></div>
+
+            <div class="architecture-step">
+                <span class="step-number">03</span>
+                <div>
+                    <strong>Risk engine</strong>
+                    <small>Four deterministic rules</small>
+                </div>
+            </div>
+
+            <div class="architecture-line"></div>
+
+            <div class="architecture-step">
+                <span class="step-number">04</span>
+                <div>
+                    <strong>AI explanation</strong>
+                    <small>Grounded investigator narrative</small>
+                </div>
+            </div>
         </div>
-
     </section>
 
 
-    <!-- ================= INPUT ================= -->
-
     <section class="panel investigation-input">
-
-        <div class="section-heading">
+        <div class="section-heading compact-heading">
             <div>
                 <span class="eyebrow">CASE INPUT</span>
                 <h2>Start Investigation</h2>
             </div>
 
-            <span class="grounded-badge">
-                ✓ Evidence Grounded
-            </span>
+            <span class="grounded-badge">✓ Evidence grounded</span>
         </div>
-
 
         <form
             action="/analyze"
@@ -90,90 +114,117 @@
             enctype="multipart/form-data"
             id="investigationForm"
         >
+            <div class="input-action-row">
 
-            <div class="input-grid">
-
-                <div class="field">
+                <div class="field scenario-field">
                     <label>Sample Scenario</label>
 
-                    <select name="case_type">
+                    <input type="hidden" name="case_type" id="caseTypeInput" value="{{ selected_case or 'difficult' }}">
 
-                        <option
-                            value="difficult"
-                            {% if selected_case == "difficult" %}
-                            selected
-                            {% endif %}
-                        >
-                            Difficult Case — Connected Risk Activity
-                        </option>
+                    <div class="custom-dropdown" id="caseTypeDropdown">
+                        <button type="button" class="dropdown-trigger" id="dropdownTrigger">
+                            <span class="selected-option-label" id="selectedOptionLabel">
+                                {% if selected_case == "normal" %}
+                                    Normal Case — Routine Activity
+                                {% else %}
+                                    Difficult Case — Connected Risk Activity
+                                {% endif %}
+                            </span>
+                            <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
 
-                        <option
-                            value="normal"
-                            {% if selected_case == "normal" %}
-                            selected
-                            {% endif %}
-                        >
-                            Normal Case — Routine Activity
-                        </option>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <div class="dropdown-option {% if selected_case != 'normal' %}selected{% endif %}" data-value="difficult">
+                                <div class="option-content">
+                                    <span class="option-title">Difficult Case — Connected Risk Activity</span>
+                                    <span class="option-sub">High velocity, new payee pattern</span>
+                                </div>
+                                <span class="option-check">✓</span>
+                            </div>
 
-                    </select>
+                            <div class="dropdown-option {% if selected_case == 'normal' %}selected{% endif %}" data-value="normal">
+                                <div class="option-content">
+                                    <span class="option-title">Normal Case — Routine Activity</span>
+                                    <span class="option-sub">Standard baseline transaction pattern</span>
+                                </div>
+                                <span class="option-check">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <small class="field-hint">Pre-configured test case scenario</small>
                 </div>
 
+                <div class="field upload-field">
+                    <label>Upload CSV</label>
 
-                <div class="field">
-                    <label>Upload Transaction History</label>
-
-                    <div class="file-input">
+                    <div class="custom-file-input">
                         <input
                             type="file"
                             name="transaction_file"
+                            id="transactionFile"
                             accept=".csv"
+                            class="file-native-input"
                         >
+                        <label for="transactionFile" class="file-input-trigger">
+                            <span class="file-browse-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Choose File
+                            </span>
+                            <span class="file-name-text" id="fileNameDisplay">No file chosen</span>
+                        </label>
                     </div>
 
-                    <small>
-                        Optional · CSV upload overrides the selected sample
-                    </small>
+                    <small class="field-hint">Optional · uploaded CSV overrides sample</small>
+                </div>
+
+                <div class="field action-field">
+                    <label class="label-spacer">&nbsp;</label>
+
+                    <button class="investigate-btn" type="submit">
+                        <span>Run Investigation</span>
+                        <span class="button-arrow">→</span>
+                    </button>
+
+                    <small class="field-hint-spacer">&nbsp;</small>
                 </div>
 
             </div>
 
-
-            <div class="requirements">
-                Required fields:
-                <code>transaction_id</code>
-                <code>date</code>
-                <code>time</code>
-                <code>description</code>
-                <code>payee</code>
-                <code>amount</code>
-                <code>channel</code>
-            </div>
-
-
-            <button class="investigate-btn" type="submit">
-                <span>Run Investigation</span>
-                <span class="button-arrow">→</span>
-            </button>
-
+            <details class="schema-details">
+                <summary>CSV schema</summary>
+                <div class="requirements">
+                    <code>transaction_id</code>
+                    <code>date</code>
+                    <code>time</code>
+                    <code>description</code>
+                    <code>payee</code>
+                    <code>amount</code>
+                    <code>channel</code>
+                </div>
+            </details>
         </form>
-
     </section>
 
 
     {% if error %}
-
     <section class="error-panel">
-        <strong>Investigation could not be completed</strong>
-        <p>{{ error }}</p>
+        <div class="error-icon">!</div>
+        <div>
+            <strong>Investigation could not be completed</strong>
+            <p>{{ error }}</p>
+        </div>
     </section>
-
     {% endif %}
 
 
     {% if result %}
-
-    <!-- ================= STATUS ================= -->
 
     <section class="
         result-banner
@@ -183,7 +234,6 @@
             result-safe
         {% endif %}
     ">
-
         <div class="result-icon">
             {% if result.report.status == 'ATTENTION RECOMMENDED' %}
                 !
@@ -193,77 +243,118 @@
         </div>
 
         <div class="result-copy">
-            <span class="eyebrow">INVESTIGATION OUTCOME</span>
+            <span class="eyebrow">PRIMARY FINDING</span>
             <h2>{{ result.report.status }}</h2>
             <p>{{ result.report.summary }}</p>
         </div>
 
         <div class="human-review">
-            Human decision required
+            <span>HUMAN DECISION</span>
+            <strong>Required</strong>
         </div>
-
     </section>
 
-
-    <!-- ================= METRICS ================= -->
 
     <section class="metrics-grid">
 
         <div class="metric">
-            <div class="metric-label">TRANSACTIONS</div>
-
-            <div class="metric-value">
-                {{ result.baseline.transaction_count }}
+            <div class="metric-topline">
+                <span class="metric-label">TRANSACTIONS</span>
+                <span class="metric-index">01</span>
             </div>
-
-            <div class="metric-description">
-                Records analyzed
-            </div>
+            <div class="metric-value">{{ result.baseline.transaction_count }}</div>
+            <div class="metric-description">Records analyzed</div>
         </div>
 
-
         <div class="metric">
-            <div class="metric-label">FLAGGED</div>
-
-            <div class="metric-value">
-                {{ result.report.flagged_transaction_ids | length }}
+            <div class="metric-topline">
+                <span class="metric-label">FLAGGED</span>
+                <span class="metric-index">02</span>
             </div>
-
-            <div class="metric-description">
-                Require review
-            </div>
+            <div class="metric-value">{{ result.report.flagged_transaction_ids | length }}</div>
+            <div class="metric-description">Require investigator review</div>
         </div>
 
-
         <div class="metric">
-            <div class="metric-label">AMOUNT UNDER REVIEW</div>
-
+            <div class="metric-topline">
+                <span class="metric-label">AMOUNT UNDER REVIEW</span>
+                <span class="metric-index">03</span>
+            </div>
             <div class="metric-value amount">
                 ₹{{ "{:,.0f}".format(result.report.total_flagged_amount) }}
             </div>
-
-            <div class="metric-description">
-                Flagged transaction value
-            </div>
+            <div class="metric-description">Flagged transaction value</div>
         </div>
 
-
         <div class="metric">
-            <div class="metric-label">RULES TRIGGERED</div>
-
-            <div class="metric-value">
-                {{ result.report.triggered_rules | length }}
+            <div class="metric-topline">
+                <span class="metric-label">RULES TRIGGERED</span>
+                <span class="metric-index">04</span>
             </div>
-
-            <div class="metric-description">
-                Independent indicators
-            </div>
+            <div class="metric-value">{{ result.report.triggered_rules | length }}</div>
+            <div class="metric-description">Independent indicators</div>
         </div>
 
     </section>
 
 
-    <!-- ================= RISK + BASELINE ================= -->
+    {% if result.report.findings and result.baseline.amount.median > 0 %}
+    <section class="panel behaviour-contrast-panel">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">BEHAVIOUR CONTRAST</span>
+                <h2>Why the activity stands out</h2>
+            </div>
+
+            <span class="analysis-badge">Baseline comparison</span>
+        </div>
+
+        <div class="contrast-grid">
+
+            <div class="contrast-card">
+                <span class="contrast-label">Typical transaction</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(result.baseline.amount.median) }}
+                </strong>
+                <small>Historical median</small>
+            </div>
+
+            <div class="contrast-arrow">→</div>
+
+            <div class="contrast-card highlight">
+                <span class="contrast-label">Largest flagged transaction</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(result.report.findings[0].amount) }}
+                </strong>
+                <small>
+                    Significantly above the customer's typical transaction size
+                </small>
+            </div>
+
+            <div class="contrast-divider"></div>
+
+            <div class="contrast-card">
+                <span class="contrast-label">Typical activity window</span>
+                <strong>
+                    {{ result.baseline.time.typical_start_time }}
+                    –
+                    {{ result.baseline.time.typical_end_time }}
+                </strong>
+                <small>Established customer pattern</small>
+            </div>
+
+            <div class="contrast-arrow">→</div>
+
+            <div class="contrast-card highlight">
+                <span class="contrast-label">Flagged activity</span>
+                <strong>{{ result.report.findings[0].datetime[11:16] }}</strong>
+                <small>Time of first flagged transaction</small>
+            </div>
+
+        </div>
+    </section>
+    {% endif %}
+
 
     <section class="two-column">
 
@@ -271,43 +362,30 @@
 
             <div class="section-heading">
                 <div>
-                    <span class="eyebrow">DETECTION</span>
+                    <span class="eyebrow">DETERMINISTIC DETECTION</span>
                     <h2>Risk Indicators</h2>
                 </div>
             </div>
 
-
             {% if result.report.triggered_rules %}
-
                 <div class="rules-grid">
 
                     {% for rule in result.report.triggered_rules %}
-
                     <div class="risk-rule">
                         <div class="risk-rule-top">
-                            <span class="rule-id">
-                                {{ rule.rule_id }}
-                            </span>
-
-                            <span class="triggered">
-                                TRIGGERED
-                            </span>
+                            <span class="rule-id">{{ rule.rule_id }}</span>
+                            <span class="triggered">TRIGGERED</span>
                         </div>
 
-                        <strong>
-                            {{ rule.rule_name }}
-                        </strong>
+                        <strong>{{ rule.rule_name }}</strong>
                     </div>
-
                     {% endfor %}
 
                 </div>
 
             {% else %}
-
                 <div class="empty-state">
                     <div class="empty-icon">✓</div>
-
                     <div>
                         <strong>No risk indicators triggered</strong>
                         <p>
@@ -316,7 +394,6 @@
                         </p>
                     </div>
                 </div>
-
             {% endif %}
 
         </div>
@@ -331,34 +408,24 @@
                 </div>
             </div>
 
-
             <div class="baseline-list">
 
                 <div class="baseline-row">
                     <span>Median transaction</span>
-
                     <strong>
-                        ₹{{ "{:,.2f}".format(
-                            result.baseline.amount.median
-                        ) }}
+                        ₹{{ "{:,.2f}".format(result.baseline.amount.median) }}
                     </strong>
                 </div>
-
 
                 <div class="baseline-row">
                     <span>Average transaction</span>
-
                     <strong>
-                        ₹{{ "{:,.2f}".format(
-                            result.baseline.amount.mean
-                        ) }}
+                        ₹{{ "{:,.2f}".format(result.baseline.amount.mean) }}
                     </strong>
                 </div>
 
-
                 <div class="baseline-row">
                     <span>Typical activity</span>
-
                     <strong>
                         {{ result.baseline.time.typical_start_time }}
                         –
@@ -366,10 +433,8 @@
                     </strong>
                 </div>
 
-
                 <div class="baseline-row">
                     <span>Most common channel</span>
-
                     <strong>
                         {% if result.baseline.channels %}
                             {{ result.baseline.channels.keys() | list | first }}
@@ -386,12 +451,9 @@
     </section>
 
 
-    <!-- ================= EVIDENCE ================= -->
-
     <section class="panel evidence-panel">
 
         <div class="section-heading">
-
             <div>
                 <span class="eyebrow">TRACEABLE EVIDENCE</span>
                 <h2>Flagged Transactions</h2>
@@ -401,16 +463,12 @@
                 {{ result.report.flagged_transaction_ids | length }}
                 evidence items
             </div>
-
         </div>
-
 
         {% if result.report.findings %}
 
         <div class="table-wrapper">
-
             <table>
-
                 <thead>
                     <tr>
                         <th>TRANSACTION</th>
@@ -423,23 +481,16 @@
                 </thead>
 
                 <tbody>
-
                 {% for finding in result.report.findings %}
-
                 <tr>
-
                     <td>
-                        <span class="txn-id">
-                            {{ finding.transaction_id }}
-                        </span>
+                        <span class="txn-id">{{ finding.transaction_id }}</span>
                     </td>
 
-                    <td>
-                        {{ finding.datetime }}
-                    </td>
+                    <td>{{ finding.datetime }}</td>
 
                     <td>
-                        <strong>{{ finding.payee }}</strong>
+                        <strong class="payee-name">{{ finding.payee }}</strong>
                     </td>
 
                     <td>
@@ -449,40 +500,26 @@
                     </td>
 
                     <td>
-                        {{ finding.channel }}
+                        <span class="channel-chip">{{ finding.channel }}</span>
                     </td>
 
                     <td>
-
                         <div class="rule-tags">
-
                             {% for rule in finding.triggered_rules %}
-
                                 <span>{{ rule }}</span>
-
                             {% endfor %}
-
                         </div>
-
                     </td>
-
                 </tr>
-
                 {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
 
         {% else %}
 
         <div class="empty-state evidence-empty">
-
             <div class="empty-icon">✓</div>
-
             <div>
                 <strong>No transaction evidence requires review.</strong>
                 <p>
@@ -490,7 +527,6 @@
                     deterministic risk findings.
                 </p>
             </div>
-
         </div>
 
         {% endif %}
@@ -498,30 +534,25 @@
     </section>
 
 
-    <!-- ================= CONNECTED ACTIVITY ================= -->
-
     {% if result.report.findings %}
 
     <section class="panel connection-panel">
 
         <div class="section-heading">
-
             <div>
                 <span class="eyebrow">PATTERN VIEW</span>
                 <h2>Connected Activity</h2>
             </div>
 
-            <span class="connection-label">
-                Evidence relationship
-            </span>
-
+            <span class="connection-label">Evidence relationship</span>
         </div>
-
 
         <div class="connection-visual">
 
             <div class="payee-node">
-                <span>PAYEE{% if result.report.flagged_payees and result.report.flagged_payees | length > 1 %}S{% endif %}</span>
+                <span>
+                    PAYEE{% if result.report.flagged_payees and result.report.flagged_payees | length > 1 %}S{% endif %}
+                </span>
 
                 <strong>
                     {% if result.report.flagged_payees %}
@@ -532,39 +563,29 @@
                 </strong>
 
                 <small>
-                    ₹{{ "{:,.0f}".format(
-                        result.report.total_flagged_amount
-                    ) }}
-                    total
+                    ₹{{ "{:,.0f}".format(result.report.total_flagged_amount) }}
+                    total flagged value
                 </small>
             </div>
-
 
             <div class="connector">
                 <div class="connector-line"></div>
             </div>
 
-
             <div class="transaction-nodes">
 
                 {% for finding in result.report.findings %}
-
                 <div class="transaction-node">
 
-                    <span class="txn-id">
-                        {{ finding.transaction_id }}
-                    </span>
+                    <span class="txn-id">{{ finding.transaction_id }}</span>
 
                     <strong>
                         ₹{{ "{:,.0f}".format(finding.amount) }}
                     </strong>
 
-                    <small>
-                        {{ finding.datetime[11:16] }}
-                    </small>
+                    <small>{{ finding.datetime[11:16] }}</small>
 
                 </div>
-
                 {% endfor %}
 
             </div>
@@ -576,51 +597,55 @@
     {% endif %}
 
 
-    <!-- ================= AI ================= -->
-
     <section class="panel ai-panel">
 
         <div class="ai-header">
 
             <div class="ai-title">
-
                 <div class="ai-icon">✦</div>
 
                 <div>
                     <span class="eyebrow">GEMINI ASSISTED</span>
                     <h2>AI Investigator</h2>
                 </div>
-
             </div>
 
-
             {% if result.ai_investigation.available %}
-
                 <span class="ai-status">
-                    ● GROUNDED
+                    <span class="ai-status-dot"></span>
+                    GROUNDED
                 </span>
-
             {% else %}
-
                 <span class="ai-status unavailable">
                     FALLBACK ACTIVE
                 </span>
-
             {% endif %}
 
         </div>
 
-
         <div class="grounding-note">
-            AI explanation is generated only from verified
-            deterministic findings. It does not determine fraud.
+            <strong>Grounded explanation layer.</strong>
+            Gemini receives verified deterministic findings only.
+            It does not determine whether fraud occurred.
         </div>
 
-
-        <div class="ai-content">
-            {{ result.ai_investigation.html | safe }}
-        </div>
-
+        {% if result.ai_investigation.available %}
+            <div class="ai-content">
+                {{ result.ai_investigation.html | safe }}
+            </div>
+        {% else %}
+            <div class="ai-fallback">
+                <div class="fallback-icon">i</div>
+                <div>
+                    <strong>AI narrative temporarily unavailable</strong>
+                    <p>
+                        The deterministic investigation remains fully available.
+                        Review the verified evidence, risk indicators and behavioural
+                        baseline above.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
 
         <div class="decision-warning">
             <strong>Human judgment remains authoritative.</strong>
@@ -635,34 +660,33 @@
 </main>
 
 
-<!-- ================= LOADING OVERLAY ================= -->
-
 <div class="loading-overlay" id="loadingOverlay">
 
     <div class="scanner-card">
 
         <div class="scanner-icon">
             <div class="scan-ring"></div>
-            <span>R</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <circle cx="11" cy="11" r="3"/>
+                <path d="m13.2 13.2 2.3 2.3"/>
+            </svg>
         </div>
 
+        <span class="loading-eyebrow">RISK ANALYSIS IN PROGRESS</span>
         <h2>Investigating Transactions</h2>
 
-        <p>
-            Building evidence-grounded risk analysis...
-        </p>
+        <p>Building evidence-grounded risk analysis...</p>
 
         <div class="scan-progress">
             <div class="scan-bar"></div>
         </div>
 
         <div class="loading-steps">
-
             <span>✓ Loading transaction history</span>
             <span>• Establishing behavioural baseline</span>
             <span>• Evaluating deterministic risk rules</span>
             <span>• Preparing investigator report</span>
-
         </div>
 
     </div>
@@ -671,9 +695,11 @@
 
 
 <script>
-
 const form = document.getElementById("investigationForm");
 const overlay = document.getElementById("loadingOverlay");
+const fileInput = document.getElementById("transactionFile");
+const fileNameDisplay = document.getElementById("fileNameDisplay");
+const customFileInput = document.querySelector(".custom-file-input");
 
 if (form) {
     form.addEventListener("submit", function () {
@@ -681,6 +707,53 @@ if (form) {
     });
 }
 
+if (fileInput && fileNameDisplay && customFileInput) {
+    fileInput.addEventListener("change", function () {
+        if (this.files && this.files.length > 0) {
+            const file = this.files[0];
+            const sizeInKb = (file.size / 1024).toFixed(1);
+            fileNameDisplay.textContent = `${file.name} (${sizeInKb} KB)`;
+            customFileInput.classList.add("has-file");
+        } else {
+            fileNameDisplay.textContent = "No file chosen";
+            customFileInput.classList.remove("has-file");
+        }
+    });
+}
+
+// Custom Dropdown Component JS
+const dropdown = document.getElementById("caseTypeDropdown");
+const dropdownTrigger = document.getElementById("dropdownTrigger");
+const caseTypeInput = document.getElementById("caseTypeInput");
+const selectedOptionLabel = document.getElementById("selectedOptionLabel");
+const dropdownOptions = document.querySelectorAll(".dropdown-option");
+
+if (dropdown && dropdownTrigger) {
+    dropdownTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        dropdown.classList.toggle("open");
+    });
+
+    dropdownOptions.forEach(option => {
+        option.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const val = this.getAttribute("data-value");
+            const title = this.querySelector(".option-title").textContent;
+
+            caseTypeInput.value = val;
+            selectedOptionLabel.textContent = title;
+
+            dropdownOptions.forEach(opt => opt.classList.remove("selected"));
+            this.classList.add("selected");
+
+            dropdown.classList.remove("open");
+        });
+    });
+
+    document.addEventListener("click", function () {
+        dropdown.classList.remove("open");
+    });
+}
 </script>
 
 </body>
